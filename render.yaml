@@ -1,0 +1,74 @@
+services:
+  - type: web
+    name: catering
+    env: php
+    region: oregon   # or `virginia` if your Neon DB is in US East
+    plan: free
+    buildCommand: |
+      composer install --optimize-autoloader --no-dev
+      php artisan config:clear
+      php artisan route:clear
+      php artisan view:clear
+    startCommand: php artisan serve --host 0.0.0.0 --port 10000
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        sync: false   # we’ll set this manually in dashboard or via secrets
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://catering.onrender.com
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        value: ep-flat-lake-adgaraml-pooler.c-2.us-east-1.aws.neon.tech
+      - key: DB_PORT
+        value: 5432
+      - key: DB_DATABASE
+        value: catering
+      - key: DB_USERNAME
+        value: neondb_owner
+      - key: DB_PASSWORD
+        sync: false   # never commit secrets, set in dashboard or secrets store
+      - key: DB_SSLMODE
+        value: require
+      - key: DB_SCHEMA
+        value: public
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_DRIVER
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+
+  # Optional: Worker for Laravel queues
+  - type: worker
+    name: catering-worker
+    env: php
+    region: oregon
+    plan: free
+    buildCommand: |
+      composer install --optimize-autoloader --no-dev
+    startCommand: php artisan queue:work --sleep=3 --tries=3 --timeout=90
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        sync: false
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        value: ep-flat-lake-adgaraml-pooler.c-2.us-east-1.aws.neon.tech
+      - key: DB_PORT
+        value: 5432
+      - key: DB_DATABASE
+        value: catering
+      - key: DB_USERNAME
+        value: neondb_owner
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSLMODE
+        value: require
+      - key: DB_SCHEMA
+        value: public
