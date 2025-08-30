@@ -19,10 +19,11 @@
                     </div>
 
                     <!-- Success Message -->
-                    @if(session('success'))
+                    @if (session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
                         </div>
                     @endif
 
@@ -33,7 +34,7 @@
                                 <tr>
                                     <th scope="col">ID</th>
                                     <th scope="col">Type</th>
-                                    <th scope="col">Amount</th>
+                                    <th scope="col">Amount (KSHs)</th>
                                     <th scope="col">Date</th>
                                     <th scope="col" class="text-center">Actions</th>
                                 </tr>
@@ -42,25 +43,18 @@
                                 @forelse($transactions as $transaction)
                                     <tr>
                                         <td>{{ $transaction->id }}</td>
-                                        <td>
-                                            <span class="badge
-                                                @if($transaction->type === 'income') bg-success
-                                                @else bg-danger
-                                                @endif">
-                                                {{ ucfirst($transaction->type) }}
-                                            </span>
-                                        </td>
-                                        <td class="fw-semibold">KSHs {{ number_format($transaction->amount, 2) }}</td>
+                                        <td>{{ ucfirst($transaction->type) }}</td>
+
+                                        <td class="fw-semibold">{{ number_format($transaction->amount, 2) }}</td>
                                         <td>{{ $transaction->created_at->format('Y-m-d') }}</td>
                                         <td class="text-center">
                                             <a href="{{ route('transactions.edit', $transaction) }}"
-                                               class="btn btn-sm btn-outline-primary me-2">
+                                                class="btn btn-sm btn-outline-primary me-2">
                                                 <i class="bi bi-pencil"></i> Edit
                                             </a>
                                             <form action="{{ route('transactions.destroy', $transaction) }}"
-                                                  method="POST"
-                                                  class="d-inline"
-                                                  onsubmit="return confirm('Are you sure you want to delete this transaction?')">
+                                                method="POST" class="d-inline"
+                                                onsubmit="return confirm('Are you sure you want to delete this transaction?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -68,7 +62,9 @@
                                                 </button>
                                             </form>
                                         </td>
+
                                     </tr>
+
                                 @empty
                                     <tr>
                                         <td colspan="5" class="text-center text-muted">
@@ -76,7 +72,13 @@
                                         </td>
                                     </tr>
                                 @endforelse
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">
+                                        Total amount: KSHs {{ $totalAmount }}
+                                    </td>
+                                </tr>
                             </tbody>
+
                         </table>
                     </div>
 
